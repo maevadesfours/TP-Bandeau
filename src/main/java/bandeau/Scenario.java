@@ -1,6 +1,6 @@
 package bandeau;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Classe utilitaire pour représenter la classe-association UML
@@ -23,6 +23,23 @@ public class Scenario {
 
     private final List<ScenarioElement> myElements = new LinkedList<>();
 
+    /*private class ScenarioPlayer extends Thread {
+
+        private Bandeau b = null;
+        public ScenarioPlayer(Bandeau b){
+            this.b=b;
+        }
+        @Override
+        public void run(){
+            for (ScenarioElement element : myElements){ 
+                for(int repeats = 0; repeats<element.repeats; repeats++){
+                    element.effect.playOn(this.b);
+        }   
+    }*/
+
+  
+
+
     /**
      * Ajouter un effect au scenario.
      *
@@ -38,11 +55,35 @@ public class Scenario {
      *
      * @param b le bandeau ou s'afficher.
      */
-    public void playOn(Bandeau b) {
-        for (ScenarioElement element : myElements) {
-            for (int repeats = 0; repeats < element.repeats; repeats++) {
-                element.effect.playOn(b);
+    public void playOn(BandeauVerrouillable b) {
+        new Thread(
+            //"lambda-expresssion"
+            () -> {
+                //b.verrouille();
+                try{
+                    //b.deverouille();
+                } finally {}
+            }).start();
+    }
+
+        private void play(Bandeau b){
+            verrouEnLecture.lock();
+            for (ScenarioElement element: myElements){
+                for (int repeats=0; repeats<element.repeats; repeats++){
+                    element.effect.playOn(b);
+                }
             }
+            verrouEnLecture.unlock();
         }
     }
-}
+    
+        /*for (ScenarioElement element : myElements) {
+            for (int repeats = 0; repeats < element.repeats; repeats++) {
+                element.effect.playOn(b);
+             ScenarioPlayer player = new ScenarioPlayer(b);
+             player.start();
+            }
+        }*/
+     
+    
+
